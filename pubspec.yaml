@@ -1,0 +1,47 @@
+name: smart_expense_tracker
+description: Smart expense tracking app with Firebase
+
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Firebase
+  firebase_core: ^2.32.0
+  firebase_auth: ^4.20.0
+  cloud_firestore: ^4.17.5
+  # cloud_functions: ^4.7.5 # Opsional, jika ingin memanggil functions dari client
+
+  # State Management
+  provider: ^6.1.2
+
+  # UI & Utilities
+  google_fonts: ^6.2.1
+  intl: ^0.19.0
+  fl_chart: ^0.68.0 # Untuk grafik
+  lottie: ^3.1.2 # Untuk animasi
+  flutter_svg: ^2.0.10+1 # Untuk ikon kustom jika ada
+
+  # Notifikasi Lokal
+  flutter_local_notifications: ^17.2.1+1
+
+  # Shared Preferences (untuk simpan tema)
+  shared_preferences: ^2.2.3
+
+  cupertino_icons: ^1.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  # assets:
+  #  - assets/animations/ # Buat folder ini jika pakai Lottie
+  #  - assets/icons/ # Buat folder ini jika pakai ikon SVG
