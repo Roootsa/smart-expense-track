@@ -92,7 +92,14 @@ class ExpenseProvider with ChangeNotifier {
     await _service.deleteCategory(id);
   }
 
-  
+   Future<void> updateExpense(ExpenseModel expense) async {
+    await _service.updateExpense(expense);
+  }
+
+  Future<void> deleteExpense(String expenseId) async {
+    await _service.deleteExpense(expenseId);
+  }
+
 
     Future<void> addExpense(ExpenseModel expense) async {
     try {

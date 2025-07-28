@@ -30,11 +30,14 @@ class ExpenseService {
     await _expenseCollection.add(data);
   }
   Future<void> updateExpense(ExpenseModel expense) async {
-    await _expenseCollection.doc(expense.id).update(expense.toJson());
+    // Pastikan UID dari user yang login ikut tersimpan
+    final data = expense.toJson();
+    data['userId'] = uid;
+    await _expenseCollection.doc(expense.id).update(data);
   }
 
-  Future<void> deleteExpense(String id) async {
-    await _expenseCollection.doc(id).delete();
+  Future<void> deleteExpense(String expenseId) async {
+    await _expenseCollection.doc(expenseId).delete();
   }
 
   
