@@ -73,6 +73,20 @@ class AuthService {
     }
   }
 
+  Future<void> updateProfile(String displayName) async {
+    final User? user = _auth.currentUser;
+    if (user != null) {
+      // 1. Perbarui nama di Firebase Authentication
+      await user.updateDisplayName(displayName);
+
+      // 2. Perbarui nama di dokumen Firestore
+      await _firestore.collection('users').doc(user.uid).update({
+        'displayName': displayName,
+      });
+    }
+  }
+
+
   Future<void> signOut() async {
     await _auth.signOut();
   }

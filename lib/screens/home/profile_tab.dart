@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-// DITAMBAHKAN: Import untuk Provider
 import 'package:smart_expense_tracker/providers/auth_provider.dart';
 import 'package:smart_expense_tracker/providers/theme_provider.dart';
+
+// DITAMBAHKAN: Import untuk semua halaman pengaturan
+import 'package:smart_expense_tracker/screens/settings/edit_profile_screen.dart';
 import 'package:smart_expense_tracker/screens/category/manage_categories_screen.dart';
 import 'package:smart_expense_tracker/screens/settings/bill_reminders_screen.dart';
 import 'package:smart_expense_tracker/screens/settings/export_data_screen.dart';
+
 
 class ProfileTab extends StatelessWidget {
   const ProfileTab({super.key});
@@ -14,9 +16,7 @@ class ProfileTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    // Tipe AuthProvider sekarang dikenali
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    
     final user = authProvider.userModel;
 
     return Scaffold(
@@ -26,6 +26,7 @@ class ProfileTab extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
         children: [
+          // --- Bagian Info Pengguna ---
           Row(
             children: [
               CircleAvatar(
@@ -56,49 +57,44 @@ class ProfileTab extends StatelessWidget {
 
           const SizedBox(height: 30),
 
+          // --- Grup Menu Pengaturan Akun & Data ---
           _buildSettingsGroup(context, theme, [
-            _buildSettingsTile(context, icon: Icons.category_rounded, title: 'Kelola Kategori', onTap: () {}),
-            _buildSettingsTile(context, icon: Icons.notifications_active_rounded, title: 'Pengingat Tagihan', onTap: () {}),
-            _buildSettingsTile(context, icon: Icons.download_for_offline_rounded, title: 'Ekspor Data', onTap: () {}),
-            
             _buildSettingsTile(
-    context,
-    icon: Icons.category_rounded,
-    title: 'Kelola Kategori',
-    // GANTI baris onTap ini
-     onTap: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const ExportDataScreen()),
-      );
-    },
-  ),
+              context,
+              icon: Icons.edit_outlined,
+              title: 'Edit Profil',
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const EditProfileScreen())),
+            ),
+            _buildSettingsTile(
+              context,
+              icon: Icons.category_rounded,
+              title: 'Kelola Kategori',
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ManageCategoriesScreen())),
+            ),
+            _buildSettingsTile(
+              context,
+              icon: Icons.notifications_active_rounded,
+              title: 'Pengingat Tagihan',
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const BillRemindersScreen())),
+            ),
+             _buildSettingsTile(
+              context,
+              icon: Icons.download_for_offline_rounded,
+              title: 'Ekspor Data',
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ExportDataScreen())),
+            ),
           ]),
 
           const SizedBox(height: 20),
 
-          _buildSettingsTile(
-    context,
-    icon: Icons.notifications_active_rounded,
-    title: 'Pengingat Tagihan',
-    // Ganti baris onTap ini
-    onTap: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const BillRemindersScreen()),
-      );
-    },
-  ),
-
+          // --- Grup Menu Pengaturan Aplikasi ---
           _buildSettingsGroup(context, theme, [
-            ListTile(
+             ListTile(
               leading: Icon(Icons.dark_mode_rounded, color: theme.iconTheme.color),
               title: const Text('Mode Gelap'),
-              // Tipe ThemeProvider sekarang dikenali
               trailing: Consumer<ThemeProvider>(
                 builder: (context, themeProvider, child) {
                   return Switch(
-                    // Properti .isDarkMode dan method .toggleTheme() sekarang akan berfungsi
                     value: themeProvider.isDarkMode,
                     onChanged: (value) {
                       themeProvider.toggleTheme(value);
@@ -108,11 +104,17 @@ class ProfileTab extends StatelessWidget {
                 }
               ),
             ),
-            _buildSettingsTile(context, icon: Icons.help_outline_rounded, title: 'Bantuan', onTap: () {}),
+            _buildSettingsTile(
+              context,
+              icon: Icons.help_outline_rounded,
+              title: 'Bantuan',
+              onTap: () {}, // Kosongkan untuk saat ini
+            ),
           ]),
           
           const SizedBox(height: 30),
 
+          // --- Tombol Keluar ---
           ListTile(
             leading: const Icon(Icons.logout_rounded, color: Colors.red),
             title: const Text('Keluar', style: TextStyle(color: Colors.red)),
@@ -125,11 +127,15 @@ class ProfileTab extends StatelessWidget {
     );
   }
 
-
   Widget _buildSettingsGroup(BuildContext context, ThemeData theme, List<Widget> children) {
     return Container(
-      decoration: BoxDecoration(color: theme.cardColor, borderRadius: BorderRadius.circular(12)),
-      child: Column(children: children),
+      decoration: BoxDecoration(
+        color: theme.cardColor,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        children: children,
+      ),
     );
   }
 
@@ -143,7 +149,6 @@ class ProfileTab extends StatelessWidget {
     );
   }
 
-  // Tipe AuthProvider sekarang dikenali
   void _showLogoutDialog(BuildContext context, AuthProvider authProvider) {
     showDialog(
       context: context,

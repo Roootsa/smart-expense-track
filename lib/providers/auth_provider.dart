@@ -62,6 +62,18 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  Future<void> updateProfile(String displayName) async {
+    try {
+      await _authService.updateProfile(displayName);
+      // Setelah berhasil, perbarui data user model secara lokal agar UI langsung berubah
+      _userModel = await _authService.getUserModel(user!.uid);
+      notifyListeners();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+
   Future<void> signOut() async {
     await _authService.signOut();
   }
