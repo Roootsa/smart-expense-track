@@ -6,6 +6,7 @@ import 'package:smart_expense_tracker/models/expense_model.dart';
 import 'package:smart_expense_tracker/services/expense_service.dart';
 import 'package:smart_expense_tracker/services/notification_service.dart';
 import 'package:smart_expense_tracker/utils/helpers.dart'; // DITAMBAHKAN: Untuk formatCurrency
+import 'package:intl/intl.dart';
 
 class ExpenseProvider with ChangeNotifier {
   final String? uid;
@@ -36,6 +37,32 @@ class ExpenseProvider with ChangeNotifier {
     }
   }
 
+   List<Map<String, Object>> get weeklySpendingSummary {
+    final List<Map<String, Object>> summary = [];
+    final today = DateTime.now();
+
+    // Loop untuk 7 hari terakhir
+    for (int i = 6; i >= 0; i--) {
+      final weekDay = today.subtract(Duration(days: i));
+      double totalSum = 0;
+
+      // Cari semua expense di hari tersebut dan jumlahkan
+      for (var expense in _expenses) {
+        if (expense.date.day == weekDay.day &&
+            expense.date.month == weekDay.month &&
+            expense.date.year == weekDay.year) {
+          totalSum += expense.amount;
+        }
+      }
+
+      summary.add({
+        'day': DateFormat('E', 'id_ID').format(weekDay), // Format hari (Sen, Sel, Rab, dst.)
+        'amount': totalSum,
+        'x_axis': 6 - i, // Untuk posisi di sumbu X grafik (0=6 hari lalu, 6=hari ini)
+      });
+    }
+    return summary;
+  }
   // Getters
   List<ExpenseModel> get expenses => _expenses;
   bool get isLoadingExpenses => _isLoadingExpenses;

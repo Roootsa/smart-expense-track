@@ -6,6 +6,7 @@ import 'package:smart_expense_tracker/providers/auth_provider.dart';
 import 'package:smart_expense_tracker/providers/theme_provider.dart';
 import 'package:smart_expense_tracker/screens/category/manage_categories_screen.dart';
 import 'package:smart_expense_tracker/screens/settings/bill_reminders_screen.dart';
+import 'package:smart_expense_tracker/screens/settings/export_data_screen.dart';
 
 class ProfileTab extends StatelessWidget {
   const ProfileTab({super.key});
@@ -59,15 +60,16 @@ class ProfileTab extends StatelessWidget {
             _buildSettingsTile(context, icon: Icons.category_rounded, title: 'Kelola Kategori', onTap: () {}),
             _buildSettingsTile(context, icon: Icons.notifications_active_rounded, title: 'Pengingat Tagihan', onTap: () {}),
             _buildSettingsTile(context, icon: Icons.download_for_offline_rounded, title: 'Ekspor Data', onTap: () {}),
+            
             _buildSettingsTile(
     context,
     icon: Icons.category_rounded,
     title: 'Kelola Kategori',
     // GANTI baris onTap ini
-    onTap: () {
+     onTap: () {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (_) => const ManageCategoriesScreen()),
+        MaterialPageRoute(builder: (_) => const ExportDataScreen()),
       );
     },
   ),
@@ -122,6 +124,7 @@ class ProfileTab extends StatelessWidget {
       ),
     );
   }
+
 
   Widget _buildSettingsGroup(BuildContext context, ThemeData theme, List<Widget> children) {
     return Container(
