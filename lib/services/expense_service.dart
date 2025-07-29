@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:smart_expense_tracker/models/bill_reminder_model.dart'; // DITAMBAHKAN
 import 'package:smart_expense_tracker/models/expense_model.dart';
 import 'package:smart_expense_tracker/models/category_model.dart';
 
@@ -8,72 +9,25 @@ class ExpenseService {
 
   final CollectionReference _expenseCollection = FirebaseFirestore.instance.collection('expenses');
   final CollectionReference _categoryCollection = FirebaseFirestore.instance.collection('categories');
+  final CollectionReference _billReminderCollection = FirebaseFirestore.instance.collection('bill_reminders');
 
   // --- Expense CRUD ---
-   Stream<List<ExpenseModel>> getExpenses() {
-    return _expenseCollection
-        .where('userId', isEqualTo: uid)
-        .orderBy('date', descending: true)
-        .snapshots()
-        .map(_expenseListFromSnapshot);
-  }
-  List<ExpenseModel> _expenseListFromSnapshot(QuerySnapshot snapshot) {
-    return snapshot.docs.map((doc) {
-      return ExpenseModel.fromFirestore(doc);
-    }).toList();
-  }
+  Stream<List<ExpenseModel>> getExpenses() => _expenseCollection.where('userId', isEqualTo: uid).orderBy('date', descending: true).snapshots().map((s) => s.docs.map((d) => ExpenseModel.fromFirestore(d)).toList());
+  Future<void> addExpense(ExpenseModel e) async => await _expenseCollection.add(e.toJson()..['userId'] = uid);
+  Future<void> updateExpense(ExpenseModel e) async => await _expenseCollection.doc(e.id).update(e.toJson()..['userId'] = uid);
+  Future<void> deleteExpense(String id) async => await _expenseCollection.doc(id).delete();
   
-    Future<void> addExpense(ExpenseModel expense) async {
-    // Pastikan UID dari user yang login ikut tersimpan
-    final data = expense.toJson();
-    data['userId'] = uid; 
-    await _expenseCollection.add(data);
-  }
-  Future<void> updateExpense(ExpenseModel expense) async {
-    // Pastikan UID dari user yang login ikut tersimpan
-    final data = expense.toJson();
-    data['userId'] = uid;
-    await _expenseCollection.doc(expense.id).update(data);
-  }
-
-  Future<void> deleteExpense(String expenseId) async {
-    await _expenseCollection.doc(expenseId).delete();
-  }
-
+  // --- Category CRUD ---
+  Stream<List<CategoryModel>> getCategories() => _categoryCollection.where('userId', isEqualTo: uid).snapshots().map((s) => s.docs.map((d) => CategoryModel.fromFirestore(d)).toList());
+  Future<void> addCategory(String n, int i, int c) async => await _categoryCollection.add({'userId': uid, 'name': n, 'iconCodePoint': i, 'colorValue': c});
+  Future<void> updateCategory(String id, String n, int i, int c) async => await _categoryCollection.doc(id).update({'name': n, 'iconCodePoint': i, 'colorValue': c});
+  Future<void> deleteCategory(String id) async => await _categoryCollection.doc(id).delete();
   
-  
-  Stream<List<CategoryModel>> getCategories() {
-    // Kategori dibuat per-user agar tidak tercampur
-    return _categoryCollection
-        .where('userId', isEqualTo: uid)
-        .snapshots()
-        .map(_categoryListFromSnapshot);
+  // --- Bill Reminders CRUD ---
+  Stream<List<BillReminderModel>> getBillReminders() {
+    return _billReminderCollection.where('userId', isEqualTo: uid).orderBy('dueDate').snapshots().map((s) => s.docs.map((d) => BillReminderModel.fromFirestore(d)).toList());
   }
-
-  List<CategoryModel> _categoryListFromSnapshot(QuerySnapshot snapshot) {
-    return snapshot.docs.map((doc) {
-      return CategoryModel.fromFirestore(doc);
-    }).toList();
-  }
-  
-  Future<void> addCategory(String name, int iconCodePoint, int colorValue) async {
-    await _categoryCollection.add({
-      'userId': uid, // Penting untuk memisahkan kategori antar user
-      'name': name,
-      'iconCodePoint': iconCodePoint,
-      'colorValue': colorValue,
-    });
-  }
-
-  Future<void> updateCategory(String id, String name, int iconCodePoint, int colorValue) async {
-    await _categoryCollection.doc(id).update({
-      'name': name,
-      'iconCodePoint': iconCodePoint,
-      'colorValue': colorValue,
-    });
-  }
-
-  Future<void> deleteCategory(String id) async {
-    await _categoryCollection.doc(id).delete();
-  }
+  Future<void> addBillReminder(BillReminderModel r) async => await _billReminderCollection.add(r.toJson()..['userId'] = uid);
+  Future<void> updateBillReminder(BillReminderModel r) async => await _billReminderCollection.doc(r.id).update(r.toJson());
+  Future<void> deleteBillReminder(String id) async => await _billReminderCollection.doc(id).delete();
 }
